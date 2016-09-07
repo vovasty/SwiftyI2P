@@ -1,0 +1,6 @@
+[submodule "lib/dist/i2pd"]
+	path = lib/dist/i2pd
+	url = https://github.com/vovasty/i2pd.git
+[submodule "lib/dist/ios-cmake"]
+	path = lib/dist/ios-cmake
+	url = https://github.com/vovasty/ios-cmake.git
