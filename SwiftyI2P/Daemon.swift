@@ -12,23 +12,23 @@
 import Foundation
 
 private extension String {
-    func stringByAppendingPathComponent(path: String) -> String {
-        return (self as NSString).stringByAppendingPathComponent(path)
+    func stringByAppendingPathComponent(_ path: String) -> String {
+        return (self as NSString).appendingPathComponent(path)
     }
 }
 
-extension I2PError: ErrorType {
+extension I2PError: Error {
     public func message() -> String {
         switch self {
         case .OK:
             return "No Error"
-        case .TryAgain:
+        case .tryAgain:
             return "Site is currently unavailable."
-        case .Unresolvable:
+        case .unresolvable:
             return "Host can not be resolved."
-        case .Timeout:
+        case .timeout:
             return "Timeout."
-        case .ServiceNotStarted:
+        case .serviceNotStarted:
             return "I2PDaemon is not running."
         }
     }
@@ -74,8 +74,8 @@ public struct Config {
     public static func defaultConfig() -> Config {
         return Config(
                 host: ("127.0.0.1", 0),
-             datadir: (NSSearchPathForDirectoriesInDomains(.DocumentDirectory,
-                .UserDomainMask,
+             datadir: (NSSearchPathForDirectoriesInDomains(.documentDirectory,
+                .userDomainMask,
                 true).first ?? "/").stringByAppendingPathComponent("i2pd"),
            httpProxy: (4446, true),
           socksProxy: (4447, false),
@@ -83,47 +83,49 @@ public struct Config {
     }
 }
 
-public class Daemon {
-    public private (set) var state: State = .stopped
-    public let config: Config
-    private let queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0)
+open class Daemon {
+    open fileprivate (set) var state: State = .stopped
+    open let config: Config
+    fileprivate let queue = DispatchQueue.global(qos: .background)
 
-    public static var defaultDaemon: Daemon = Daemon()
+    open static var defaultDaemon: Daemon = Daemon()
 
     public init(config: Config = Config.defaultConfig()) {
 
         self.config = config
 
-        config.host.name.withCString { (hostName) -> Int32 in
-            return config.datadir.withCString({ (datadir) -> Int32 in
-                let cfg = I2PConfig(
-                    host: hostName,
-                    datadir: datadir,
-                    loglevel: "error",
-                    port: Int32(config.host.port),
-                    httpProxyPort: Int32(config.httpProxy.port),
-                    httpProxyEnabled: config.httpProxy.enabled ? 1 : 0,
-                    socksProxyPort: Int32(config.socksProxy.port),
-                    socksProxyEnabled: config.socksProxy.enabled ? 1 : 0,
-                    floodfill: config.floodfill ? 1 : 0)
+        let _ = "error".withCString {(logLevel) -> Int32 in
+            config.host.name.withCString { (hostName) -> Int32 in
+                config.datadir.withCString({ (datadir) -> Int32 in
+                    let cfg = I2PConfig(
+                        host: hostName,
+                        datadir: datadir,
+                        loglevel: logLevel,
+                        port: Int32(config.host.port),
+                        httpProxyPort: Int32(config.httpProxy.port),
+                        httpProxyEnabled: config.httpProxy.enabled ? 1 : 0,
+                        socksProxyPort: Int32(config.socksProxy.port),
+                        socksProxyEnabled: config.socksProxy.enabled ? 1 : 0,
+                        floodfill: config.floodfill ? 1 : 0)
 
-                return i2p_init(cfg)
-            })
+                    return i2p_init(cfg)
+                })
+            }
         }
     }
 
-    public func start() {
+    open func start() {
         guard state == .stopped else { return }
 
         state = .starting
 
-        dispatch_async(queue) { () -> Void in
+        queue.async { () -> Void in
             i2p_start()
             self.state = .running
         }
     }
 
-    public func stop() {
+    open func stop() {
         guard state != .stopped else { return }
 
         i2p_stop()

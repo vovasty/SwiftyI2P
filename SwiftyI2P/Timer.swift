@@ -12,45 +12,35 @@
 import Foundation
 
 class Timer {
-    private var timer: dispatch_source_t!
+    fileprivate let timer: DispatchSourceTimer
 
-    init(timeout: UInt64,
-                  queue: dispatch_queue_t = dispatch_get_main_queue(),
+    init(timeout: Int,
+                  queue: DispatchQueue = DispatchQueue.main,
              repeatable: Bool,
         fireImmediately: Bool = false,
-                  block:(timer: Timer) -> Void) {
-        timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, queue)
-        dispatch_source_set_event_handler(timer) {
-            block(timer: self)
-        }
+                  block:@escaping (_ timer: Timer) -> Void) {
+        timer = DispatchSource.makeTimerSource(queue: queue)
+        timer.setEventHandler { block(self) }
 
-        let interval = Int64(timeout * NSEC_PER_SEC)
+        let startTime = DispatchTime.now() + (fireImmediately ? 0.0 : Double(timeout))
 
         if repeatable {
-            dispatch_source_set_timer(timer, dispatch_walltime(nil, fireImmediately ? 0 : interval), UInt64(interval), 0)
+            timer.scheduleRepeating(deadline: startTime,
+                                    interval: DispatchTimeInterval.seconds(timeout))
         } else {
-            dispatch_source_set_timer(timer, dispatch_time(DISPATCH_TIME_NOW, interval),
-                                      DISPATCH_TIME_FOREVER,
-                                      0)
+            timer.scheduleOneshot(deadline: startTime)
         }
     }
 
     func start() {
-        guard let timer = timer else { return }
-
-        dispatch_resume(timer)
+        timer.resume()
     }
 
     func stop() {
-        guard let timer = timer else { return }
-
-        dispatch_source_cancel(timer)
-        self.timer = nil
+        timer.cancel()
     }
 
     deinit {
-        if let timer = timer {
-            dispatch_source_cancel(timer)
-        }
+        timer.cancel()
     }
 }

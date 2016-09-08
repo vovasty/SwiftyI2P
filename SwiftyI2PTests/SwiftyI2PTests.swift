@@ -13,13 +13,13 @@ import XCTest
 @testable import SwiftyI2P
 
 class SwiftyI2PTests: XCTestCase {
-    var dataTask: NSURLSessionDataTask?
+    var dataTask: URLSessionDataTask?
 
     func testLoad() throws {
         let daemon = Daemon.defaultDaemon
         daemon.start()
 
-        let expectation = expectationWithDescription("testLoad")
+        let expectation = self.expectation(description: "testLoad")
 
         daemon.resolve("zmw2cyw2vj7f6obx3msmdvdepdhnw2ctc4okza2zjxlukkdfckhq.b32.i2p",
                        timeout: 1100) { (error) in
@@ -28,7 +28,7 @@ class SwiftyI2PTests: XCTestCase {
             expectation.fulfill()
         }
 
-        waitForExpectationsWithTimeout(1200, handler: nil)
+        waitForExpectations(timeout: 1200, handler: nil)
         daemon.stop()
     }
 }

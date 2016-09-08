@@ -16,17 +16,17 @@ public struct Resolver {
 
     public init(host: String,
               daemon: Daemon,
-             timeout: NSTimeInterval,
-             closure: (NSError?) -> Void) {
+             timeout: TimeInterval,
+             closure: @escaping (NSError?) -> Void) {
 
-        let endTime = NSDate().dateByAddingTimeInterval(timeout)
+        let endTime = Date().addingTimeInterval(timeout)
         timer = Timer(timeout: 5,
-                        queue: dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0),
+                        queue: DispatchQueue.global(qos: DispatchQoS.QoSClass.background),
                    repeatable: true,
               fireImmediately: true) { (timer) -> Void in
-            guard NSDate().compare(endTime) != .OrderedDescending else {
+            guard Date().compare(endTime) != .orderedDescending else {
                 timer.stop()
-                closure(I2PError.Timeout.error())
+                closure(I2PError.timeout.error())
                 return
             }
 
@@ -35,7 +35,7 @@ public struct Resolver {
                 return
             case .stopped:
                 timer.stop()
-                closure(I2PError.ServiceNotStarted.error())
+                closure(I2PError.serviceNotStarted.error())
                 return
             case .running:
                 let error = i2p_is_reachable(host)
@@ -44,7 +44,7 @@ public struct Resolver {
                 case .OK:
                     timer.stop()
                     closure(nil)
-                case .TryAgain:
+                case .tryAgain:
                     return
                 default:
                     timer.stop()
@@ -64,9 +64,9 @@ public struct Resolver {
 }
 
 public extension Daemon {
-    public func resolve(host: String,
-                     timeout: NSTimeInterval,
-                     closure: (NSError?) -> Void) -> Resolver {
+    public func resolve(_ host: String,
+                     timeout: TimeInterval,
+                     closure: @escaping (NSError?) -> Void) -> Resolver {
 
         let resolver = Resolver(host: host,
                                  daemon: self,
