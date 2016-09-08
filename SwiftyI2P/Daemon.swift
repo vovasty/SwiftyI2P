@@ -77,8 +77,8 @@ public struct Config {
              datadir: (NSSearchPathForDirectoriesInDomains(.DocumentDirectory,
                 .UserDomainMask,
                 true).first ?? "/").stringByAppendingPathComponent("i2pd"),
-           httpProxy: (4446, false),
-          socksProxy: (4447, true),
+           httpProxy: (4446, true),
+          socksProxy: (4447, false),
            floodfill: true)
     }
 }
@@ -99,6 +99,7 @@ public class Daemon {
                 let cfg = I2PConfig(
                     host: hostName,
                     datadir: datadir,
+                    loglevel: "error",
                     port: Int32(config.host.port),
                     httpProxyPort: Int32(config.httpProxy.port),
                     httpProxyEnabled: config.httpProxy.enabled ? 1 : 0,

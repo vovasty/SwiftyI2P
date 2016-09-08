@@ -31,6 +31,7 @@ typedef NS_ENUM(int, I2PError) {
 typedef struct I2PConfig {
     const char  *host;
     const char  *datadir;
+    const char  *loglevel;
     int         port;
     int         httpProxyPort;
     int         httpProxyEnabled;

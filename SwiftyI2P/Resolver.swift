@@ -17,13 +17,16 @@ public struct Resolver {
     public init(host: String,
               daemon: Daemon,
              timeout: NSTimeInterval,
-             closure: (I2PError?) -> Void) {
+             closure: (NSError?) -> Void) {
 
         let endTime = NSDate().dateByAddingTimeInterval(timeout)
-        timer = Timer(timeout: 5, repeatable: true) { (timer) -> Void in
+        timer = Timer(timeout: 5,
+                        queue: dispatch_get_global_queue(QOS_CLASS_BACKGROUND, 0),
+                   repeatable: true,
+              fireImmediately: true) { (timer) -> Void in
             guard NSDate().compare(endTime) != .OrderedDescending else {
                 timer.stop()
-                closure(I2PError.Timeout)
+                closure(I2PError.Timeout.error())
                 return
             }
 
@@ -32,7 +35,7 @@ public struct Resolver {
                 return
             case .stopped:
                 timer.stop()
-                closure(I2PError.ServiceNotStarted)
+                closure(I2PError.ServiceNotStarted.error())
                 return
             case .running:
                 let error = i2p_is_reachable(host)
@@ -45,7 +48,7 @@ public struct Resolver {
                     return
                 default:
                     timer.stop()
-                    closure(error)
+                    closure(error.error())
                 }
             }
         }
@@ -63,7 +66,7 @@ public struct Resolver {
 public extension Daemon {
     public func resolve(host: String,
                      timeout: NSTimeInterval,
-                     closure: (I2PError?) -> Void) -> Resolver {
+                     closure: (NSError?) -> Void) -> Resolver {
 
         let resolver = Resolver(host: host,
                                  daemon: self,

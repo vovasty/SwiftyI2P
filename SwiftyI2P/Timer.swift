@@ -17,6 +17,7 @@ class Timer {
     init(timeout: UInt64,
                   queue: dispatch_queue_t = dispatch_get_main_queue(),
              repeatable: Bool,
+        fireImmediately: Bool = false,
                   block:(timer: Timer) -> Void) {
         timer = dispatch_source_create(DISPATCH_SOURCE_TYPE_TIMER, 0, 0, queue)
         dispatch_source_set_event_handler(timer) {
@@ -26,7 +27,7 @@ class Timer {
         let interval = Int64(timeout * NSEC_PER_SEC)
 
         if repeatable {
-            dispatch_source_set_timer(timer, dispatch_walltime(nil, interval), UInt64(interval), 0)
+            dispatch_source_set_timer(timer, dispatch_walltime(nil, fireImmediately ? 0 : interval), UInt64(interval), 0)
         } else {
             dispatch_source_set_timer(timer, dispatch_time(DISPATCH_TIME_NOW, interval),
                                       DISPATCH_TIME_FOREVER,
