@@ -25,6 +25,7 @@ buildSimulator()
             -DBoost_INCLUDE_DIR=$OUTPUT_DIR_HEADERS \
             -DBoost_LIBRARY_DIR=$OUTPUT_DIR_LIB \
             -DOPENSSL_INCLUDE_DIR=$OUTPUT_DIR_HEADERS \
+            -DCMAKE_MIN_IOS=9.0 \
             -DOPENSSL_SSL_LIBRARY=libssl.a \
             -DOPENSSL_CRYPTO_LIBRARY=libcrypto.a \
             $SRC/build >> "$IOSBUILDDIR/simulator.log" 2>&1
@@ -43,6 +44,7 @@ buildIOS()
             -DCMAKE_TOOLCHAIN_FILE=$IOS_TOOLCHAIN \
             -DWITH_STATIC=yes \
             -DWITH_BINARY=no \
+            -DCMAKE_MIN_IOS=9.0 \
             -DOPENSSL_INCLUDE_DIR=$OUTPUT_DIR_HEADERS \
             -DBoost_INCLUDE_DIR=$OUTPUT_DIR_HEADERS \
             -DBoost_LIBRARY_DIR=$OUTPUT_DIR_LIB \

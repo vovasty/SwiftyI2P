@@ -31,14 +31,14 @@ STDLIB=libc++   # libstdc++
 COMPILER=clang++
 PARALLEL_MAKE=16   # how many threads to make boost with
 
-BOOST_V1=1.61.0
-BOOST_V2=1_61_0
+BOOST_V1=1.62.0
+BOOST_V2=1_62_0
 
 BITCODE="-fembed-bitcode"  # Uncomment this line for Bitcode generation
 
 CURRENTPATH=`pwd`
 LOGDIR="$CURRENTPATH/build/boost/logs/"
-IOS_MIN_VERSION=7.0
+IOS_MIN_VERSION=8.0
 SDKVERSION=`xcrun -sdk iphoneos --show-sdk-version`
 OSX_SDKVERSION=`xcrun -sdk macosx --show-sdk-version`
 DEVELOPER=`xcode-select -print-path`

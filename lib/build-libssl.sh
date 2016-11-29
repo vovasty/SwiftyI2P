@@ -21,7 +21,7 @@
 ###########################################################################
 #  Change values here                                                     #
 #                                                                         #
-VERSION="1.0.2h"                                                          #
+VERSION="1.0.2j"                                                          #
 IOS_SDKVERSION=`xcrun -sdk iphoneos --show-sdk-version`                   #
 TVOS_SDKVERSION=`xcrun -sdk appletvos --show-sdk-version`                 #
 CONFIG_OPTIONS=""                                                         #
@@ -56,7 +56,7 @@ spinner()
 CURRENTPATH=`pwd`/build/openssl
 ARCHS="i386 x86_64 armv7 armv7s arm64 tv_x86_64 tv_arm64"
 DEVELOPER=`xcode-select -print-path`
-IOS_MIN_SDK_VERSION="7.0"
+IOS_MIN_SDK_VERSION="8.0"
 TVOS_MIN_SDK_VERSION="9.0"
 
 if [ ! -d "$DEVELOPER" ]; then
