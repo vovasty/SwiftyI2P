@@ -31,8 +31,8 @@ STDLIB=libc++   # libstdc++
 COMPILER=clang++
 PARALLEL_MAKE=16   # how many threads to make boost with
 
-BOOST_V1=1.62.0
-BOOST_V2=1_62_0
+BOOST_V1=1.63.0
+BOOST_V2=1_63_0
 
 BITCODE="-fembed-bitcode"  # Uncomment this line for Bitcode generation
 

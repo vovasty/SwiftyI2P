@@ -93,7 +93,6 @@ int i2p_init(I2PConfig cfg) {
     } else {
         // use stdout -- default
     }
-    i2p::log::Logger().Ready();
     
     LogPrint(eLogInfo,	"i2pd v", VERSION, " starting");
     LogPrint(eLogDebug, "FS: main config file: ", config);
@@ -101,6 +100,9 @@ int i2p_init(I2PConfig cfg) {
     
     bool precomputation; i2p::config::GetOption("precomputation.elgamal", precomputation);
     i2p::crypto::InitCrypto (precomputation);
+    
+    int netID; i2p::config::GetOption("netid", netID);
+    i2p::context.SetNetID (netID);
     i2p::context.Init ();
     
     bool ipv6;		i2p::config::GetOption("ipv6", ipv6);
@@ -177,12 +179,40 @@ int i2p_init(I2PConfig cfg) {
     {
         LogPrint(eLogInfo, "Daemon: explicit trust enabled");
         std::string fam; i2p::config::GetOption("trust.family", fam);
+        std::string routers; i2p::config::GetOption("trust.routers", routers);
+        bool restricted = false;
         if (fam.length() > 0)
         {
-            LogPrint(eLogInfo, "Daemon: setting restricted routes to use family ", fam);
-            i2p::transport::transports.RestrictRoutes({fam});
-        } else
-            LogPrint(eLogError, "Daemon: no family specified for restricted routes");
+            std::set<std::string> fams;
+            size_t pos = 0, comma;
+            do
+            {
+                comma = fam.find (',', pos);
+                fams.insert (fam.substr (pos, comma != std::string::npos ? comma - pos : std::string::npos));
+                pos = comma + 1;
+            }
+            while (comma != std::string::npos);
+            i2p::transport::transports.RestrictRoutesToFamilies(fams);
+            restricted  = fams.size() > 0;
+        }
+        if (routers.length() > 0) {
+            std::set<i2p::data::IdentHash> idents;
+            size_t pos = 0, comma;
+            do
+            {
+                comma = routers.find (',', pos);
+                i2p::data::IdentHash ident;
+                ident.FromBase64 (routers.substr (pos, comma != std::string::npos ? comma - pos : std::string::npos));
+                idents.insert (ident);
+                pos = comma + 1;
+            }
+            while (comma != std::string::npos);
+            LogPrint(eLogInfo, "Daemon: setting restricted routes to use ", idents.size(), " trusted routesrs");
+            i2p::transport::transports.RestrictRoutesToRouters(idents);
+            restricted = idents.size() > 0;
+        }
+        if(!restricted)
+            LogPrint(eLogError, "Daemon: no trusted routers of families specififed");
     }
     bool hidden; i2p::config::GetOption("trust.hidden", hidden);
     if (hidden)
@@ -190,11 +220,12 @@ int i2p_init(I2PConfig cfg) {
         LogPrint(eLogInfo, "Daemon: using hidden mode");
         i2p::data::netdb.SetHidden(true);
     }
-    return 1;
+    return true;
 }
 
 int i2p_start()
 {
+    i2p::log::Logger().Start();
     LogPrint(eLogInfo, "Daemon: starting NetDB");
     i2p::data::netdb.Start();
     
@@ -236,7 +267,7 @@ int i2p_start()
     LogPrint(eLogInfo, "Daemon: starting Client");
     i2p::client::context.Start ();
     
-//    // I2P Control Protocol
+    // I2P Control Protocol
 //    bool i2pcontrol; i2p::config::GetOption("i2pcontrol.enabled", i2pcontrol);
 //    if (i2pcontrol) {
 //        std::string i2pcpAddr; i2p::config::GetOption("i2pcontrol.address", i2pcpAddr);
@@ -245,11 +276,26 @@ int i2p_start()
 //        d.m_I2PControlService = std::unique_ptr<i2p::client::I2PControlService>(new i2p::client::I2PControlService (i2pcpAddr, i2pcpPort));
 //        d.m_I2PControlService->Start ();
 //    }
-    return 1;
+#ifdef WITH_EVENTS
+    
+    bool websocket; i2p::config::GetOption("websockets.enabled", websocket);
+    if(websocket) {
+        std::string websocketAddr; i2p::config::GetOption("websockets.address", websocketAddr);
+        uint16_t		websocketPort; i2p::config::GetOption("websockets.port",		websocketPort);
+        LogPrint(eLogInfo, "Daemon: starting Websocket server at ", websocketAddr, ":", websocketPort);
+        d.m_WebsocketServer = std::unique_ptr<i2p::event::WebsocketServer>(new i2p::event::WebsocketServer (websocketAddr, websocketPort));
+        d.m_WebsocketServer->Start();
+        i2p::event::core.SetListener(d.m_WebsocketServer->ToListener());
+    }
+#endif
+    return true;
 }
 
 int i2p_stop()
 {
+#ifdef WITH_EVENTS
+    i2p::event::core.SetListener(nullptr);
+#endif
     LogPrint(eLogInfo, "Daemon: shutting down");
     LogPrint(eLogInfo, "Daemon: stopping Client");
     i2p::client::context.Stop();
@@ -275,9 +321,18 @@ int i2p_stop()
 //        LogPrint(eLogInfo, "Daemon: stopping I2PControl");
 //        d.m_I2PControlService->Stop ();
 //        d.m_I2PControlService = nullptr;
-//    }	
+//    }
+#ifdef WITH_EVENTS
+    if (d.m_WebsocketServer) {
+        LogPrint(eLogInfo, "Daemon: stopping Websocket server");
+        d.m_WebsocketServer->Stop();
+        d.m_WebsocketServer = nullptr;
+    }
+#endif
     i2p::crypto::TerminateCrypto ();
-    return 1;
+    i2p::log::Logger().Stop();
+    
+    return true;
 }
 
 I2PError i2p_is_reachable(const char* address) {
