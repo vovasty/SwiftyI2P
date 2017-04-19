@@ -10,8 +10,6 @@
 		CD1A59401C348FF400AF1950 /* libssl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CD1A593D1C348FF400AF1950 /* libssl.a */; };
 		CD1A59411C348FF400AF1950 /* libcrypto.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CD1A593E1C348FF400AF1950 /* libcrypto.a */; };
 		CD1A59461C3493D700AF1950 /* libi2pdclient.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CD1A59441C3493D700AF1950 /* libi2pdclient.a */; };
-		CD9659DE1C41E81600FEF99A /* Resolver.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD9659DD1C41E81600FEF99A /* Resolver.swift */; };
-		CD9659E01C41E98E00FEF99A /* Timer.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD9659DF1C41E98E00FEF99A /* Timer.swift */; };
 		CDA0B84F1D7F3CE700C6BE97 /* libz.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = CDA0B84E1D7F3CE700C6BE97 /* libz.tbd */; };
 		CDA0F5071C55A4D8002D986A /* libi2pd.a in Frameworks */ = {isa = PBXBuildFile; fileRef = CDA0F5061C55A4D8002D986A /* libi2pd.a */; };
 		CDB564321C34EE1400FD0ECE /* libc++.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = CDB564311C34EE1400FD0ECE /* libc++.tbd */; };
@@ -41,8 +39,6 @@
 		CD1A593D1C348FF400AF1950 /* libssl.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libssl.a; path = lib/lib/libssl.a; sourceTree = "<group>"; };
 		CD1A593E1C348FF400AF1950 /* libcrypto.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libcrypto.a; path = lib/lib/libcrypto.a; sourceTree = "<group>"; };
 		CD1A59441C3493D700AF1950 /* libi2pdclient.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libi2pdclient.a; path = lib/lib/libi2pdclient.a; sourceTree = "<group>"; };
-		CD9659DD1C41E81600FEF99A /* Resolver.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Resolver.swift; sourceTree = "<group>"; };
-		CD9659DF1C41E98E00FEF99A /* Timer.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Timer.swift; sourceTree = "<group>"; };
 		CDA0B84E1D7F3CE700C6BE97 /* libz.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.tbd; path = usr/lib/libz.tbd; sourceTree = SDKROOT; };
 		CDA0F5061C55A4D8002D986A /* libi2pd.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; name = libi2pd.a; path = lib/lib/libi2pd.a; sourceTree = "<group>"; };
 		CDB564311C34EE1400FD0ECE /* libc++.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = "libc++.tbd"; path = "usr/lib/libc++.tbd"; sourceTree = SDKROOT; };
@@ -117,8 +113,6 @@
 				CDEA10831C2497AA0005463F /* SwiftyI2P.h */,
 				CDEA10851C2497AA0005463F /* Info.plist */,
 				CDEA12781C261DB80005463F /* Daemon.swift */,
-				CD9659DD1C41E81600FEF99A /* Resolver.swift */,
-				CD9659DF1C41E98E00FEF99A /* Timer.swift */,
 			);
 			path = SwiftyI2P;
 			sourceTree = "<group>";
@@ -278,9 +272,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				CDEA120C1C24B9AE0005463F /* i2pwrapper.cpp in Sources */,
-				CD9659E01C41E98E00FEF99A /* Timer.swift in Sources */,
 				CDEA12791C261DB80005463F /* Daemon.swift in Sources */,
-				CD9659DE1C41E81600FEF99A /* Resolver.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -344,6 +336,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				MTL_ENABLE_DEBUG_INFO = YES;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CPLUSPLUSFLAGS = (
@@ -393,6 +386,7 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				MTL_ENABLE_DEBUG_INFO = NO;
 				ONLY_ACTIVE_ARCH = YES;
 				OTHER_CPLUSPLUSFLAGS = (
@@ -420,7 +414,6 @@
 				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/lib/include";
 				INFOPLIST_FILE = SwiftyI2P/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -447,7 +440,6 @@
 				HEADER_SEARCH_PATHS = "$(PROJECT_DIR)/lib/include";
 				INFOPLIST_FILE = SwiftyI2P/Info.plist;
 				INSTALL_PATH = "$(LOCAL_LIBRARY_DIR)/Frameworks";
-				IPHONEOS_DEPLOYMENT_TARGET = 9.3;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks @loader_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",

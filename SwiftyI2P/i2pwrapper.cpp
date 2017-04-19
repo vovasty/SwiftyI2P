@@ -38,7 +38,7 @@ int i2p_init(I2PConfig cfg) {
     int argc = sizeof(argv) / sizeof(char*) - 1;
     
     bool isDaemon = false;
-    std::string VERSION = "2.9.0";
+    std::string VERSION = "2.13.0";
     
     i2p::config::Init();
     i2p::config::ParseCmdline(argc, argv);

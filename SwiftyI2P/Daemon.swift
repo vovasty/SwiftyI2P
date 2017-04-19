@@ -35,8 +35,8 @@ extension I2PError: Error {
 
     public func error() -> NSError {
         return NSError(domain: "net.aramzamzam.swiftyi2p",
-                         code: self._code,
-                     userInfo: [NSLocalizedDescriptionKey : message()])
+                       code: self._code,
+                       userInfo: [NSLocalizedDescriptionKey: message()])
     }
 }
 
@@ -74,7 +74,7 @@ public struct Config {
     public static func defaultConfig() -> Config {
         return Config(
                 host: ("127.0.0.1", 0),
-             datadir: (NSSearchPathForDirectoriesInDomains(.documentDirectory,
+             datadir: (NSSearchPathForDirectoriesInDomains(.cachesDirectory,
                 .userDomainMask,
                 true).first ?? "/").stringByAppendingPathComponent("i2pd"),
            httpProxy: (4446, true),
@@ -130,5 +130,11 @@ open class Daemon {
 
         i2p_stop()
         state = .stopped
+    }
+}
+
+public extension Daemon {
+    public func isReachable(host: String) -> I2PError {
+        return i2p_is_reachable(host)
     }
 }

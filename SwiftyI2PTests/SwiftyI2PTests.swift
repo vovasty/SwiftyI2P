@@ -19,16 +19,8 @@ class SwiftyI2PTests: XCTestCase {
         let daemon = Daemon.defaultDaemon
         daemon.start()
 
-        let expectation = self.expectation(description: "testLoad")
+        XCTAssert(daemon.isReachable(host: "zmw2cyw2vj7f6obx3msmdvdepdhnw2ctc4okza2zjxlukkdfckhq.b32.i2p") == I2PError.OK)
 
-        daemon.resolve("zmw2cyw2vj7f6obx3msmdvdepdhnw2ctc4okza2zjxlukkdfckhq.b32.i2p",
-                       timeout: 1100) { (error) in
-
-            XCTAssertNil(error)
-            expectation.fulfill()
-        }
-
-        waitForExpectations(timeout: 1200, handler: nil)
         daemon.stop()
     }
 }
