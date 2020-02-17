@@ -30,6 +30,7 @@ SOURCE_DELETE=TRUE
 # 2019-12-19: First version with Boost 1.71.0, Openssl 1.0.2t, i2pd 2.29.0
 # 2020-01-29: Update to Boost 1.72.0, Openssl 1.0.2u
 # 2020-02-01: Allow for selection of platforms to build Boost (ios, tvos, macos), DEFAULT: all
+# 2020-02-11: Update to Openssl 1.1.1d. Give user option to set Boost Platforms and Openssl targets
 #
 # LOCATION
 # --------
