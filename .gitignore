@@ -1,6 +1,5 @@
-lib/build
-lib/include
-lib/lib
-lib/dist/*.bz2
-lib/dist/*.gz
+install
+**/*/xcuserdata
+i2pd
 .DS_Store
+build

@@ -1,9 +1,6 @@
-[submodule "lib/dist/i2pd"]
-	path = lib/dist/i2pd
-	url = https://github.com/vovasty/i2pd.git
-[submodule "lib/dist/ios-cmake"]
-	path = lib/dist/ios-cmake
-	url = https://github.com/vovasty/ios-cmake.git
-[submodule "lib/dist/OpenSSL-for-iPhone"]
-	path = lib/dist/OpenSSL-for-iPhone
-	url = https://github.com/x2on/OpenSSL-for-iPhone.git
+[submodule "i2pdcpp/vendor/OpenSSL"]
+	path = i2pdcpp/vendor/OpenSSL
+	url = https://github.com/krzyzanowskim/OpenSSL.git
+[submodule "i2pdcpp/vendor/Apple-Boost-BuildScript"]
+	path = i2pdcpp/vendor/Apple-Boost-BuildScript
+	url = https://github.com/vovasty/Apple-Boost-BuildScript

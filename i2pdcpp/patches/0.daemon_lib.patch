@@ -1,0 +1,37 @@
+diff --color=auto -ru i2pd-2.50.2.org/build/CMakeLists.txt i2pd-2.50.2/build/CMakeLists.txt
+--- i2pd-2.50.2.org/build/CMakeLists.txt	2024-01-06 12:07:51
++++ i2pd-2.50.2/build/CMakeLists.txt	2024-03-08 13:55:09
+@@ -39,6 +39,7 @@
+ option(WITH_ADDRSANITIZER   "Build with address sanitizer unix only"  OFF)
+ option(WITH_THREADSANITIZER "Build with thread sanitizer unix only"   OFF)
+ option(BUILD_TESTING        "Build tests"                             OFF)
++option(WITH_DAEMON_LIBRARY  "Build daemon library"                    OFF)
+ 
+ IF(BUILD_TESTING)
+   enable_testing()
+@@ -337,6 +338,7 @@
+ endif()
+ message(STATUS "  ADDRSANITIZER    : ${WITH_ADDRSANITIZER}")
+ message(STATUS "  THREADSANITIZER  : ${WITH_THREADSANITIZER}")
++message(STATUS "  DAEMON_LIBRARY   : ${WITH_DAEMON_LIBRARY}")
+ message(STATUS "---------------------------------------")
+ 
+ if(WITH_BINARY)
+@@ -390,4 +392,17 @@
+ 
+ if(BUILD_TESTING)
+   add_subdirectory(${CMAKE_SOURCE_DIR}/tests ${CMAKE_CURRENT_BINARY_DIR}/tests)
++endif()
++
++if(WITH_DAEMON_LIBRARY)
++  list(REMOVE_ITEM DAEMON_SRC "${DAEMON_SRC_DIR}/i2pd.cpp")
++
++  add_library(libi2pddaemon ${DAEMON_SRC})
++  set_target_properties(libi2pddaemon PROPERTIES PREFIX "")
++
++  install(TARGETS libi2pddaemon
++    EXPORT libi2pddaemon
++    ARCHIVE DESTINATION ${CMAKE_INSTALL_LIBDIR}
++    LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
++    COMPONENT Libraries)
+ endif()
