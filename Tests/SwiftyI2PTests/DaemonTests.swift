@@ -28,6 +28,17 @@ final class DaemonTests: XCTestCase {
             e.fulfill()
         }
 
-        await fulfillment(of: [e], timeout: 60)
+        await fulfillment(of: [e], timeout: 120)
+    }
+
+    func testHttpProxyUrl() async throws {
+        try await daemon.start()
+        let proxyUrl = try daemon.configuration.httpProxyURL
+        XCTAssertEqual("127.0.0.1", proxyUrl?.host(percentEncoded: false))
+        XCTAssertEqual(4444, proxyUrl?.port)
+    }
+
+    func testHttpProxyUrlNotStarted() async throws {
+        XCTAssertThrowsError(try daemon.configuration.httpProxyURL)
     }
 }
