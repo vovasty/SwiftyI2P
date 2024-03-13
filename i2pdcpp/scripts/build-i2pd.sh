@@ -62,10 +62,16 @@ verifyI2p()
 
 }
 
+applyPatch()
+{
+    patch_file=$1
+    OUT="$(patch -p1 --forward -d ${I2PD_SRC_DIR} < ${patch_file})" || echo "${OUT}" | grep "Ignoring previously applied (or reversed) patch" -q || (echo "$OUT" && false);
+}
+
 patchI2p()
 {
-    OUT="$(patch -p1 --forward -d ${I2PD_SRC_DIR} < patches/0.daemon_lib.patch)" || echo "${OUT}" | grep "Ignoring previously applied (or reversed) patch" -q || (echo "$OUT" && false);
-    #patch -p1 -d ${I2PD_SRC_DIR} < patches/0.daemon_lib.patch
+    applyPatch patches/0.daemon_lib.patch
+    applyPatch patches/1.2.50.0.2-sim.patch
 }
 
 buildNative()
