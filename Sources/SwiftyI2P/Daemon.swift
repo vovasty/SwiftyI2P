@@ -74,4 +74,11 @@ public final class Configuration {
         let port = i2pd_get_int_option("httpproxy.port")
         return URL(string: "http://\(address):\(port)")
     }
+
+    /// Socks5 proxy URL
+    public var socksProxyURL: URL? {
+        let address = String(cString: i2pd_get_string_option("socksproxy.address"))
+        let port = i2pd_get_int_option("socksproxy.port")
+        return URL(string: "socks5://\(address):\(port)")
+    }
 }
