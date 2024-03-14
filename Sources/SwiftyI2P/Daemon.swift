@@ -1,6 +1,7 @@
 import Foundation
 import i2pbridge
 import os
+import Network
 
 public final class Daemon {
     private let isStarted = OSAllocatedUnfairLock(initialState: false)
@@ -68,17 +69,31 @@ public final class Configuration {
         return URL(string: "http://\(address):\(port)")
     }
 
-    /// HTTP proxy URL
-    public var httpProxyURL: URL? {
-        let address = String(cString: i2pd_get_string_option("httpproxy.address"))
+    /// HTTP proxy
+    public var httpProxy: NWEndpoint? {
+        let host = String(cString: i2pd_get_string_option("httpproxy.address"))
         let port = i2pd_get_int_option("httpproxy.port")
-        return URL(string: "http://\(address):\(port)")
+        guard let port = NWEndpoint.Port(rawValue: UInt16(port)) else {
+            return nil
+        }
+
+        return NWEndpoint.hostPort(
+            host: .init(host), 
+            port: port
+        )
     }
 
-    /// Socks5 proxy URL
-    public var socksProxyURL: URL? {
-        let address = String(cString: i2pd_get_string_option("socksproxy.address"))
+    /// Socks5 proxy
+    public var socksProxy: NWEndpoint? {
+        let host = String(cString: i2pd_get_string_option("socksproxy.address"))
         let port = i2pd_get_int_option("socksproxy.port")
-        return URL(string: "socks5://\(address):\(port)")
+        guard let port = NWEndpoint.Port(rawValue: UInt16(port)) else {
+            return nil
+        }
+
+        return NWEndpoint.hostPort(
+            host: .init(host),
+            port: port
+        )
     }
 }
