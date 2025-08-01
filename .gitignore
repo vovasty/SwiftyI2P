@@ -4,3 +4,4 @@ i2pd
 .DS_Store
 build
 .swiftpm
+.build

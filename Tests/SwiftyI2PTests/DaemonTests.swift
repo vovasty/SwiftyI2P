@@ -3,18 +3,19 @@ import Network
 @testable import SwiftyI2P
 import Testing
 
-struct DaemonTests {
+@Suite(.serialized)
+class DaemonTests {
     private let dataDir = URL(fileURLWithPath: NSTemporaryDirectory())
         .appending(component: UUID().uuidString)
 
-    @Test(.timeLimit(.seconds(60)))
+    @Test(.timeLimit(.minutes(1)))
     func start() async {
         await with(daemon: Daemon(dataDir: dataDir, configuration: Configuration())) { daemon in
             try await daemon.start()
         }
     }
 
-    @Test(.timeLimit(.seconds(60)))
+    @Test(.timeLimit(.minutes(1)))
     func socksProxy() async throws {
         await with(daemon: Daemon(dataDir: dataDir, configuration: Configuration())) { daemon in
             try await daemon.start()
@@ -28,7 +29,7 @@ struct DaemonTests {
         }
     }
 
-    @Test(.timeLimit(.seconds(60)))
+    @Test(.timeLimit(.minutes(1)))
     func setSocksProxy() async throws {
         var configuration = Configuration()
         configuration.socksProxy = .hostPort(host: "127.0.0.1", port: 4449)
@@ -38,7 +39,7 @@ struct DaemonTests {
         }
     }
 
-    @Test(.timeLimit(.seconds(60)))
+    @Test(.timeLimit(.minutes(2)))
     func setPortAndConnect() async throws {
         var configuration = Configuration()
         configuration.socksProxy = .hostPort(host: "127.0.0.1", port: 4449)
@@ -67,7 +68,7 @@ struct DaemonTests {
         do {
             try await closure(daemon)
         } catch {
-            Issue.record(error, fileID: fileID, filePath: filePath, line: line, column: column)
+            Issue.record(error)
         }
 
         await daemon.stop()

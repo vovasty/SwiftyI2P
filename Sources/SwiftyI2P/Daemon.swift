@@ -32,14 +32,14 @@ public final class Daemon: Sendable {
             DispatchQueue.global(qos: .background).async { [weak self] in
                 guard let self else { return }
                 do {
-                    try checkAssets()
-                    i2pd_set_data_dir(dataDir.path)
+                    try self.checkAssets()
+                    i2pd_set_data_dir(self.dataDir.path)
 
                     let error = String(cString: i2pd_start())
                     guard error == "ok" else {
                         throw Failure.unknown(error)
                     }
-                    isStarted.withLock {
+                    self.isStarted.withLock {
                         $0 = true
                     }
                     continuation.resume()
