@@ -92,10 +92,10 @@ buildNative()
             -DCMAKE_BUILD_TYPE=${BUILD_TYPE} \
             -DCMAKE_OSX_DEPLOYMENT_TARGET=14.0 \
             -DCMAKE_INSTALL_PREFIX=${I2PD_BUILD_DIR}/install \
-            -DCMAKE_XCODE_ATTRIBUTE_ONLY_ACTIVE_ARCH=NO \
-            -DCMAKE_IOS_INSTALL_COMBINED=YES
+            -DCMAKE_XCODE_ATTRIBUTE_ONLY_ACTIVE_ARCH=NO
 
 
+    cmake --build . --config ${BUILD_TYPE} > "buildSimulator.log" -- -sdk iphonesimulator 2>&1
     cmake --build . --config ${BUILD_TYPE} > "buildNative.log" 2>&1
     cmake --install . --config ${BUILD_TYPE} --prefix $(pwd)/install >> "buildNative.log" 2>&1
     popd > /dev/null
